@@ -105,8 +105,17 @@ export default function TripDispatcher() {
     
     setDispatchError('');
     try {
+      const payload = {
+        source: form.source,
+        destination: form.destination,
+        vehicle_id: form.vehicleId,
+        driver_id: form.driverId,
+        cargo_weight_kg: form.cargoWeight,
+        planned_distance_km: form.distance,
+        eta: new Date(Date.now() + 3600000).toISOString() // Default 1 hour ETA
+      };
       // Create draft first
-      const { data: newTrip } = await api.post('/trips', form);
+      const { data: newTrip } = await api.post('/trips', payload);
       const tripId = newTrip?.id || Math.floor(Math.random() * 1000); // fallback id if mock
       
       // Then dispatch it
