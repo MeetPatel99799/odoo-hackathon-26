@@ -1,32 +1,31 @@
 /**
- * KpiCard - High-level metrics display card
- *
- * Props:
- * - label: text label for the KPI (rendered in small caps/muted styling)
- * - value: main metric numeric or string value
- * - suffix: optional trailing text (e.g. "%", "km", "hr")
- * - accentColor: CSS color string used for the top thin colored border
+ * KpiCard — glassmorphism version
+ * Props: label, value, suffix, accentColor
  */
-export default function KpiCard({ label, value, suffix, accentColor = '#c9791a' }) {
+export default function KpiCard({ label, value, suffix, accentColor = '#5b8def' }) {
   return (
-    <div 
-      className="bg-panel border border-border rounded-xl p-5 shadow-lg flex flex-col justify-between transition-all duration-300 hover:translate-y-[-2px] hover:shadow-black/50 border-t-4"
-      style={{ borderTopColor: accentColor }}
+    <div
+      className="glass relative overflow-hidden flex flex-col justify-between p-5 transition-all duration-300 hover:-translate-y-1 group cursor-default"
+      style={{ borderTop: `3px solid ${accentColor}` }}
     >
-      <div>
-        <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest block">
-          {label}
+      {/* Subtle glow blob */}
+      <div
+        className="absolute -top-8 -right-8 w-24 h-24 rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        style={{ background: `radial-gradient(circle, ${accentColor}22, transparent 70%)` }}
+      />
+
+      <span className="text-xs font-bold text-muted uppercase tracking-widest block mb-3">
+        {label}
+      </span>
+      <div className="flex items-baseline gap-1.5">
+        <span className="text-3xl font-extrabold tracking-tight text-text">
+          {value}
         </span>
-        <div className="flex items-baseline mt-2">
-          <span className="text-3xl font-extrabold tracking-tight text-text">
-            {value}
+        {suffix && (
+          <span className="text-sm font-semibold uppercase tracking-wide" style={{ color: accentColor }}>
+            {suffix}
           </span>
-          {suffix && (
-            <span className="text-sm font-medium text-gray-400 ml-1.5 uppercase tracking-wide">
-              {suffix}
-            </span>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

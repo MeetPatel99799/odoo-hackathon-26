@@ -143,3 +143,94 @@ body::after {
 }
 
 #root { position: relative; z-index: 1; }
+
+/* ────────────────────────────────────────────────────────────
+   MODAL OVERLAY & CONTAINER
+   Any existing modal that uses bg-panel border border-border
+   gets the glass treatment automatically.
+   ──────────────────────────────────────────────────────────── */
+
+/* Modal backdrop */
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Auto-upgrade existing modals: any relative child of z-50 fixed overlay */
+.fixed.z-50 > .relative {
+  background: rgba(13, 18, 32, 0.85) !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  border-color: rgba(255, 255, 255, 0.09) !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+
+/* Modal header stripe */
+.fixed.z-50 > .relative > .border-b {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+/* Modal footer strip */
+.fixed.z-50 > .relative .border-t {
+  border-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+/* ── Form inputs (glass-subtle treatment) ── */
+input:not([type='checkbox']):not([type='radio']),
+select,
+textarea {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
+  color: var(--text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:not([type='checkbox']):not([type='radio']):focus,
+select:focus,
+textarea:focus {
+  border-color: rgba(91, 141, 239, 0.55) !important;
+  box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.12) !important;
+  outline: none !important;
+  background: rgba(91, 141, 239, 0.05) !important;
+}
+
+select option { background: #0d1220; color: var(--text); }
+
+/* ── Tables ── */
+table { border-collapse: collapse; width: 100%; }
+
+thead tr {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+tbody tr:hover {
+  background: rgba(91, 141, 239, 0.04) !important;
+}
+
+tbody tr {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+  transition: background 0.12s ease;
+}
+
+/* Table container panels → glass */
+.bg-panel.border.border-border.rounded-xl {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border-color: rgba(255, 255, 255, 0.09) !important;
+  box-shadow: var(--glass-shadow);
+}
+
+/* ── Buttons ── */
+/* Primary amber → primary blue */
+.bg-primary { background-color: var(--primary) !important; color: #fff !important; }
+.hover\:bg-amber-600:hover { background-color: var(--primary-hover) !important; }
+.text-primary { color: var(--primary) !important; }
+.border-primary { border-color: var(--primary) !important; }
+.focus\:ring-primary { --tw-ring-color: rgba(91,141,239,0.35) !important; }
+
+/* ── Status badge tweaks for new palette ── */
+.bg-primary\/20 { background: rgba(91,141,239,0.15) !important; }
