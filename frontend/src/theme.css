@@ -1,0 +1,145 @@
+/* ============================================================
+   TransitOps — GLOBAL THEME (Professional "Steel Navy")
+   Glassmorphism + interactive cursor glow.
+   ============================================================ */
+
+@theme {
+  /* ── Core Palette ── */
+  --color-background: #06080f;
+  --color-panel:      #0d1220;
+  --color-primary:    #5b8def;
+  --color-border:     #1c243b;
+  --color-text:       #e6ebf5;
+
+  /* ── Extra tokens ── */
+  --color-surface:    #131a2c;
+  --color-muted:      #7a879f;
+  --color-success:    #10b981;
+  --color-warning:    #f59e0b;
+  --color-danger:     #ef4444;
+  --color-info:       #3b82f6;
+}
+
+:root {
+  --bg:             #06080f;
+  --panel:          #0d1220;
+  --surface:        #131a2c;
+  --primary:        #5b8def;
+  --primary-hover:  #7aa4f5;
+  --border:         #1c243b;
+  --text:           #e6ebf5;
+  --muted:          #7a879f;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md:   0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg:   0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 32px rgba(91, 141, 239, 0.18);
+
+  /* ── Glassmorphism ── */
+  --glass-bg:       rgba(19, 26, 44, 0.45);
+  --glass-blur:     22px;
+  --glass-saturate: 160%;
+  --glass-border:   rgba(255, 255, 255, 0.10);
+  --glass-shadow:   0 12px 40px rgba(0, 0, 0, 0.55),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* ── Cursor glow (updated by JS in index.html) ── */
+  --cursor-x: 50%;
+  --cursor-y: 50%;
+}
+
+/* ── Glassmorphism utility classes ── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--radius-lg);
+}
+
+.glass-dark {
+  background: rgba(6, 8, 15, 0.7);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7),
+              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+}
+
+.glass-subtle {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+}
+
+.glass-primary {
+  background: rgba(91, 141, 239, 0.10);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(91, 141, 239, 0.30);
+  box-shadow: 0 6px 24px rgba(91, 141, 239, 0.15);
+  border-radius: var(--radius-md);
+}
+
+/* ── Base ── */
+*, *::before, *::after { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar        { width: 8px; height: 8px; }
+::-webkit-scrollbar-track  { background: var(--bg); }
+::-webkit-scrollbar-thumb  { background: var(--border); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* ── Ambient background ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 70% 45% at 15% 0%, rgba(91, 141, 239, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 100%, rgba(139, 92, 246, 0.07) 0%, transparent 60%),
+    linear-gradient(180deg, #06080f 0%, #080b16 100%);
+}
+
+/* ── Interactive cursor glow ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    600px circle at var(--cursor-x) var(--cursor-y),
+    rgba(91, 141, 239, 0.18),
+    rgba(91, 141, 239, 0.06) 25%,
+    transparent 55%
+  );
+  transition: background 120ms ease-out;
+  mix-blend-mode: screen;
+}
+
+#root { position: relative; z-index: 1; }
