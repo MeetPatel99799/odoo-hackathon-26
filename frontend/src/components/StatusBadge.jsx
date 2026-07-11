@@ -15,7 +15,9 @@ const STATUS_COLORS = {
   completed:  'bg-green-900/40 text-green-400 border border-green-700',
   // Amber (primary)
   'in transit':  'bg-amber-900/40 text-amber-400 border border-amber-700',
-  dispatched:    'bg-amber-900/40 text-amber-400 border border-amber-700',
+  // Blue (On Trip / Dispatched)
+  'on trip':     'bg-blue-900/40 text-blue-400 border border-blue-700',
+  dispatched:    'bg-blue-900/40 text-blue-400 border border-blue-700',
   // Yellow
   'in shop':  'bg-yellow-900/40 text-yellow-400 border border-yellow-700',
   pending:    'bg-yellow-900/40 text-yellow-400 border border-yellow-700',
