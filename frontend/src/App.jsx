@@ -107,7 +107,7 @@ function AppRoutes() {
       <Route
         path="/drivers"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="drivers">
             <Layout><Drivers /></Layout>
           </ProtectedRoute>
         }
