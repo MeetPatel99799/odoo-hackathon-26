@@ -44,7 +44,14 @@ export default function Drivers() {
 
   const handleAddSubmit = async (fields) => {
     try {
-      await api.post('/drivers', fields);
+      const payload = {
+        name: fields.name,
+        license_no: fields.licenseNo,
+        license_category: fields.category,
+        license_expiry: fields.expiry,
+        contact_number: fields.contact
+      };
+      await api.post('/drivers', payload);
       setModalError('');
       setIsModalOpen(false);
       fetchDrivers();
