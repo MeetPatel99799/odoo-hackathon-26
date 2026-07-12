@@ -131,7 +131,7 @@ function AppRoutes() {
       <Route
         path="/fuel"
         element={
-          <ProtectedRoute module="fuel_expenses">
+          <ProtectedRoute module="expenses">
             <Layout><FuelExpenses /></Layout>
           </ProtectedRoute>
         }

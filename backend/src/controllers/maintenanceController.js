@@ -19,22 +19,16 @@ const getMaintenanceLogs = async (req, res) => {
 const createMaintenanceLog = async (req, res) => {
   const client = await pool.connect();
   try {
-    const { vehicle_id, service_type, cost, service_date, status } = req.body;
+    const { vehicle_id, service_type, cost, status } = req.body;
     
     await client.query('BEGIN');
 
     const insertSql = `
       INSERT INTO maintenance_logs (vehicle_id, service_type, cost, service_date, status)
-      VALUES ($1, $2, $3, $4, $5)
+      VALUES ($1, $2, $3, CURRENT_DATE, $4)
       RETURNING *
     `;
-    const insertRes = await client.query(insertSql, [
-      vehicle_id, 
-      service_type, 
-      cost || 0, 
-      service_date || new Date().toISOString().split('T')[0], 
-      status || 'Scheduled'
-    ]);
+    const insertRes = await client.query(insertSql, [vehicle_id, service_type, cost || 0, status || 'Scheduled']);
     const newLog = insertRes.rows[0];
 
     // R9: If status is 'In Shop', update vehicle status in the same transaction
