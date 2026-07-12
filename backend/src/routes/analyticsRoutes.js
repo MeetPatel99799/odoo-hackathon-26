@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const rbac = require('../middleware/rbac');
+const { verifyToken } = require('../middleware/auth');
 const { getSummary, getMonthlyRevenue, getTopCostlyVehicles, exportCsv } = require('../controllers/analyticsController');
 
-router.get('/summary', rbac.requireAccess('analytics', 'view'), getSummary);
-router.get('/monthly-revenue', rbac.requireAccess('analytics', 'view'), getMonthlyRevenue);
-router.get('/top-costly-vehicles', rbac.requireAccess('analytics', 'view'), getTopCostlyVehicles);
-router.get('/export/csv', rbac.requireAccess('analytics', 'view'), exportCsv);
+router.use(verifyToken);
+
+router.get('/summary', getSummary);
+router.get('/monthly-revenue', getMonthlyRevenue);
+router.get('/top-costly-vehicles', getTopCostlyVehicles);
+router.get('/export/csv', exportCsv);
 
 module.exports = router;
