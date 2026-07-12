@@ -6,5 +6,6 @@ router.use('/auth', require('./authRoutes'));
 router.use('/dashboard', require('./dashboardRoutes'));
 router.use('/vehicles', require('./vehicleRoutes'));
 router.use('/drivers', require('./driverRoutes'));
+router.use('/trips', require('./tripRoutes'));
 
 module.exports = router;
