@@ -68,11 +68,14 @@ export function AuthProvider({ children }) {
   };
 
   const hasAccess = useCallback((module, minLevel = 'view') => {
-    const perm = permissions.find((p) => p.module === module);
+    const targetModule = module === 'fleet' ? 'vehicles' : module;
+    const perm = permissions.find((p) => p.module === targetModule);
     if (!perm) return false;
 
+    const normalizedMinLevel = minLevel === 'full' ? 'write' : minLevel;
+
     const userRank = ACCESS_RANK[perm.access_level] ?? 0;
-    const minRank = ACCESS_RANK[minLevel] ?? ACCESS_RANK.view;
+    const minRank = ACCESS_RANK[normalizedMinLevel] ?? ACCESS_RANK.view;
     return userRank >= minRank;
   }, [permissions]);
 
