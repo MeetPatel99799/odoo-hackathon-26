@@ -5,14 +5,23 @@ export default function LiveBoard({ trips, onComplete, onCancelTrip, readOnly })
   const [completeTripId, setCompleteTripId] = useState(null);
   const [odometer, setOdometer] = useState('');
   const [fuel, setFuel] = useState('');
+  const [completeError, setCompleteError] = useState('');
 
-  const handleCompleteSubmit = (tripId) => {
+  const handleCompleteSubmit = async (tripId) => {
+    setCompleteError('');
     if (onComplete) {
-      onComplete(tripId, { odometer: Number(odometer), fuel: Number(fuel) });
+      if (Number(odometer) <= 0 || Number(fuel) < 0 || odometer === '' || fuel === '') {
+        return;
+      }
+      try {
+        await onComplete(tripId, { final_odometer: Number(odometer), fuel_consumed_liters: Number(fuel) });
+        setCompleteTripId(null);
+        setOdometer('');
+        setFuel('');
+      } catch (err) {
+        setCompleteError(err.message || 'Failed to complete trip');
+      }
     }
-    setCompleteTripId(null);
-    setOdometer('');
-    setFuel('');
   };
 
   return (
@@ -37,9 +46,6 @@ export default function LiveBoard({ trips, onComplete, onCancelTrip, readOnly })
                 <div className="text-gray-400">
                   <span className="block">{trip.vehicle ? trip.vehicle : 'Unassigned Vehicle'}</span>
                   <span className="block">{trip.driver ? trip.driver : 'Unassigned Driver'}</span>
-                </div>
-                <div className="text-right italic text-gray-500 max-w-[50%]">
-                  {trip.note}
                 </div>
               </div>
               
@@ -79,18 +85,25 @@ export default function LiveBoard({ trips, onComplete, onCancelTrip, readOnly })
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <button onClick={() => setCompleteTripId(null)} className="text-xs text-gray-400 hover:text-text">Cancel</button>
-                    <button onClick={() => handleCompleteSubmit(trip.id)} className="text-xs bg-primary text-black px-2 py-1 rounded font-semibold">Confirm</button>
+                    <button onClick={() => { setCompleteTripId(null); setCompleteError(''); }} className="text-xs text-gray-400 hover:text-text">Cancel</button>
+                    <button 
+                      onClick={() => handleCompleteSubmit(trip.id)} 
+                      disabled={!odometer || !fuel || Number(odometer) <= 0 || Number(fuel) < 0}
+                      className="text-xs bg-primary text-black px-2 py-1 rounded font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Confirm
+                    </button>
                   </div>
+                  {completeError && (
+                    <div className="mt-2 text-xs text-red-400">
+                      {completeError}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           ))
         )}
-      </div>
-      
-      <div className="mt-4 pt-4 border-t border-border text-xs text-gray-500 italic">
-        On Complete: odometer &rarr; fuel log &rarr; expenses &rarr; Vehicle &amp; Driver Available
       </div>
     </div>
   );

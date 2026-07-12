@@ -39,24 +39,6 @@ export default function TripDispatcher() {
       let fetchedDrivers = drvRes.data;
       let fetchedTrips = tripRes.data;
 
-      // Fallback mock data if API is unreachable
-      if (fetchedVehicles.length === 0) {
-        fetchedVehicles = [
-          { id: 1, regNo: 'VAN-001', capacity: 500 },
-          { id: 2, regNo: 'TRK-099', capacity: 2000 }
-        ];
-      }
-      if (fetchedDrivers.length === 0) {
-        fetchedDrivers = [
-          { id: 1, name: 'Alice Driver' },
-          { id: 2, name: 'Bob Wheeler' }
-        ];
-      }
-      if (fetchedTrips.length === 0) {
-        fetchedTrips = [
-          { id: 101, tripCode: 'TRP-1001', source: 'Warehouse A', destination: 'Store B', vehicle: 'VAN-001', driver: 'Alice Driver', status: 'Dispatched', note: 'On time' }
-        ];
-      }
 
       setVehicleOptions(fetchedVehicles);
       setDriverOptions(fetchedDrivers);
@@ -136,6 +118,9 @@ export default function TripDispatcher() {
       fetchDependencies();
     } catch (err) {
       console.error('Failed to complete trip', err);
+      const msg = err.response?.data?.error || 'Failed to complete trip.';
+      setDispatchError(msg);
+      throw new Error(msg);
     }
   };
 

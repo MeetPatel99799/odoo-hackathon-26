@@ -15,6 +15,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [permissions, setPermissions] = useState([]);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   // Rehydrate from localStorage on mount
   useEffect(() => {
@@ -28,6 +29,7 @@ export function AuthProvider({ children }) {
     if (storedPermissions) {
       try { setPermissions(JSON.parse(storedPermissions)); } catch (_) {}
     }
+    setIsInitializing(false);
   }, []);
 
   const persistAuth = useCallback(({ token: newToken, user: newUser, permissions: newPermissions }) => {
@@ -79,7 +81,7 @@ export function AuthProvider({ children }) {
     return userRank >= minRank;
   }, [permissions]);
 
-  const value = { user, token, permissions, login, logout, hasAccess };
+  const value = { user, token, permissions, login, logout, hasAccess, isInitializing };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

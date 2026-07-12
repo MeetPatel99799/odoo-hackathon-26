@@ -3,7 +3,7 @@ const { query } = require('../config/db');
 const getDrivers = async (req, res) => {
   try {
     const { search } = req.query;
-    let sql = 'SELECT * FROM drivers';
+    let sql = 'SELECT id, name, license_no AS "licenseNo", license_category AS "category", license_expiry AS "expiry", contact_number AS "contact", trip_completion_pct AS "tripCompletionPct", safety_score AS "safetyPct", status, created_at, updated_at FROM drivers';
     const params = [];
     
     if (search) {

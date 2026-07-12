@@ -63,11 +63,6 @@ export default function DriverTable({ drivers, selectedId, onSelectRow }) {
           </table>
         )}
       </div>
-      <div className="px-6 py-4 bg-background/30 border-t border-border/40">
-        <p className="text-xs text-red-400 italic">
-          Rule: Expired license or Suspended status &rarr; blocked from trip assignment
-        </p>
-      </div>
     </div>
   );
 }
