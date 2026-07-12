@@ -78,7 +78,7 @@ export default function ServiceRecordForm({ vehicleOptions, onSubmit }) {
         <div className="pt-2">
           <button 
             type="submit"
-            className="w-full bg-amber-500 hover:bg-amber-600 text-white font-medium py-2.5 px-4 rounded-lg transition-colors"
+            className="w-full bg-amber-500 hover:bg-amber-600 text-white font-medium py-2.5 px-4 rounded-lg transition-colors cursor-pointer"
           >
             Save Record
           </button>

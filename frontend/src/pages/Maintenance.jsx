@@ -64,6 +64,7 @@ export default function Maintenance() {
         vehicle_id: fields.vehicle,
         service_type: fields.service,
         cost: fields.cost,
+        service_date: fields.date,
         status: fields.status,
       };
       await api.post('/maintenance', payload);

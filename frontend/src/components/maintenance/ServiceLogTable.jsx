@@ -43,7 +43,7 @@ export default function ServiceLogTable({ records, onClose, readOnly }) {
                     {record.status === 'In Shop' && (
                       <button 
                         onClick={() => onClose(record.id)}
-                        className="text-xs font-medium bg-surface border border-border hover:bg-background hover:text-amber-500 text-text px-3 py-1.5 rounded transition-colors"
+                        className="text-xs font-medium bg-surface border border-border hover:bg-background hover:text-amber-500 text-text px-3 py-1.5 rounded transition-colors cursor-pointer"
                       >
                         Close
                       </button>
