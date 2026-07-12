@@ -24,8 +24,11 @@ const STATUS_COLORS = {
   // Red
   inactive:   'bg-red-900/40 text-red-400 border border-red-700',
   cancelled:  'bg-red-900/40 text-red-400 border border-red-700',
+  // Orange
+  suspended:  'bg-orange-900/40 text-orange-400 border border-orange-700',
   // Gray
   draft:      'bg-gray-800 text-gray-400 border border-gray-600',
+  'off duty': 'bg-gray-800 text-gray-400 border border-gray-600',
 };
 
 export default function StatusBadge({ status }) {
