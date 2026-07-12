@@ -7,5 +7,6 @@ router.use('/dashboard', require('./dashboardRoutes'));
 router.use('/vehicles', require('./vehicleRoutes'));
 router.use('/drivers', require('./driverRoutes'));
 router.use('/trips', require('./tripRoutes'));
+router.use('/maintenance', require('./maintenanceRoutes'));
 
 module.exports = router;
