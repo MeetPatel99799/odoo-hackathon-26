@@ -1,57 +1,94 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import VehicleFilterBar from '../components/fleet/VehicleFilterBar';
 import VehicleTable from '../components/fleet/VehicleTable';
 import AddVehicleModal from '../components/fleet/AddVehicleModal';
+import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 
-const INITIAL_VEHICLES = [
-  { regNo: 'REG-001', nameModel: 'Volvo FH16', type: 'Truck', capacity: 25000, odometer: 125000, acqCost: 135000, status: 'On Trip' },
-  { regNo: 'REG-002', nameModel: 'Ford Transit', type: 'Van', capacity: 3500, odometer: 85000, acqCost: 45000, status: 'Available' },
-  { regNo: 'REG-003', nameModel: 'Mercedes Sprinter', type: 'Van', capacity: 4000, odometer: 95000, acqCost: 52000, status: 'In Shop' },
-  { regNo: 'REG-004', nameModel: 'Suzuki Carry', type: 'Mini', capacity: 1000, odometer: 180000, acqCost: 15000, status: 'Retired' },
-  { regNo: 'REG-005', nameModel: 'Scania R500', type: 'Truck', capacity: 26000, odometer: 42000, acqCost: 160000, status: 'Available' },
-  { regNo: 'REG-006', nameModel: 'Toyota TownAce', type: 'Mini', capacity: 850, odometer: 110000, acqCost: 22000, status: 'On Trip' }
-];
+/**
+ * Map a DB row (snake_case) to the shape VehicleTable expects (camelCase).
+ */
+function mapVehicle(row) {
+  return {
+    id: row.id,
+    regNo: row.reg_no,
+    nameModel: row.name_model,
+    type: row.type,
+    capacity: Number(row.max_capacity_kg),
+    odometer: Number(row.odometer),
+    acqCost: Number(row.acquisition_cost),
+    status: row.status,
+  };
+}
 
 export default function VehicleRegistry() {
-  const [vehicles, setVehicles] = useState(INITIAL_VEHICLES);
+  const { hasAccess } = useAuth();
+
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [type, setType] = useState('');
   const [status, setStatus] = useState('');
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalError, setModalError] = useState('');
 
-  // Handle changes from filter bar
+  // RBAC: Fleet Manager (vehicles Write) gets full access; others get view-only
+  const canAdd = hasAccess('vehicles', 'write');
+
+  // Fetch vehicles from the API with current filters
+  const fetchVehicles = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = {};
+      if (type) params.type = type;
+      if (status) params.status = status;
+      if (search) params.search = search;
+
+      const { data } = await api.get('/vehicles', { params });
+      setVehicles(data.map(mapVehicle));
+    } catch (err) {
+      console.error('Error fetching vehicles:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [type, status, search]);
+
+  // Fetch on mount and whenever filters change
+  useEffect(() => {
+    fetchVehicles();
+  }, [fetchVehicles]);
+
+  // Handle filter bar changes
   const handleFilterChange = (field, value) => {
     if (field === 'type') setType(value);
     if (field === 'status') setStatus(value);
     if (field === 'search') setSearch(value);
   };
 
-  // Perform interactive filter matching in-memory
-  const filteredVehicles = vehicles.filter((vehicle) => {
-    const matchesType = !type || vehicle.type === type;
-    const matchesStatus = !status || vehicle.status === status;
-    const matchesSearch = !search || vehicle.regNo.toLowerCase().includes(search.toLowerCase());
-    return matchesType && matchesStatus && matchesSearch;
-  });
+  // Handle adding a new vehicle via POST /api/vehicles
+  const handleAddVehicle = async (newVehicle) => {
+    try {
+      await api.post('/vehicles', {
+        reg_no: newVehicle.regNo,
+        name_model: newVehicle.nameModel,
+        type: newVehicle.type,
+        max_capacity_kg: newVehicle.capacity,
+        odometer: newVehicle.odometer,
+        acquisition_cost: newVehicle.acqCost,
+      });
 
-  // Handle registering a new vehicle asset
-  const handleAddVehicle = (newVehicle) => {
-    // Business Rule check: Registration number must be unique!
-    const isDuplicate = vehicles.some(
-      (v) => v.regNo.toLowerCase() === newVehicle.regNo.toLowerCase()
-    );
-
-    if (isDuplicate) {
-      setModalError(`Registration number "${newVehicle.regNo}" already exists.`);
-      return;
+      // Success: close modal, clear error, refetch
+      setModalError('');
+      setIsModalOpen(false);
+      fetchVehicles();
+    } catch (err) {
+      if (err.response?.status === 409) {
+        // Duplicate registration number
+        setModalError(err.response.data.error || 'Registration number already exists.');
+      } else {
+        setModalError('An unexpected error occurred. Please try again.');
+      }
     }
-
-    // Success: Append to list, clear errors, close modal
-    setVehicles([...vehicles, newVehicle]);
-    setModalError('');
-    setIsModalOpen(false);
-    console.log('Successfully registered new vehicle:', newVehicle);
   };
 
   return (
@@ -64,9 +101,6 @@ export default function VehicleRegistry() {
             View, filter, and register transport assets within the fleet registry.
           </p>
         </div>
-        <div className="bg-primary/10 border border-primary/30 text-primary px-3 py-1 rounded-md text-xs font-mono select-none self-start md:self-auto">
-          Preview Mode (In-Memory Data)
-        </div>
       </div>
 
       {/* Vehicle Filter Bar */}
@@ -76,11 +110,21 @@ export default function VehicleRegistry() {
         search={search}
         onChange={handleFilterChange}
         onAddClick={() => setIsModalOpen(true)}
-        canAdd={true} // Enabled for testing the visual flow
+        canAdd={canAdd}
       />
 
-      {/* Vehicles Table */}
-      <VehicleTable vehicles={filteredVehicles} />
+      {/* Loading indicator */}
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <svg className="animate-spin h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+          </svg>
+        </div>
+      ) : (
+        /* Vehicles Table — shows ALL vehicles including Retired/In Shop */
+        <VehicleTable vehicles={vehicles} />
+      )}
 
       {/* Add Vehicle Modal Dialog */}
       <AddVehicleModal

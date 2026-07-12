@@ -99,7 +99,7 @@ function AppRoutes() {
       <Route
         path="/fleet"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="vehicles">
             <Layout><VehicleRegistry /></Layout>
           </ProtectedRoute>
         }
