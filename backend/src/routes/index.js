@@ -8,6 +8,8 @@ router.use('/vehicles', require('./vehicleRoutes'));
 router.use('/drivers', require('./driverRoutes'));
 router.use('/trips', require('./tripRoutes'));
 router.use('/maintenance', require('./maintenanceRoutes'));
+router.use('/settings', require('./settingsRoutes'));
+router.use('/roles', require('./roleRoutes'));
 router.use('/fuel-logs', require('./fuelRoutes'));
 router.use('/expenses', require('./expenseRoutes'));
 router.use('/analytics', require('./analyticsRoutes'));
