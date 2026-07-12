@@ -26,7 +26,7 @@ export default function Settings() {
       }
     } catch (err) {
       console.error('Error fetching settings:', err);
-      setError('Failed to load system settings.');
+      setError('Failed to load general settings.');
     }
   };
 
@@ -35,19 +35,14 @@ export default function Settings() {
       const { data } = await api.get('/roles/permissions');
       setMatrix(data || {});
     } catch (err) {
-      console.error('Error fetching permissions matrix:', err);
-      setError('Failed to load RBAC permissions matrix.');
+      console.error('Error fetching role permissions:', err);
+      setError('Failed to load permissions matrix.');
     }
   };
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      setError('');
-      await Promise.all([fetchSettings(), fetchPermissions()]);
-      setLoading(false);
-    };
-    loadData();
+    setLoading(true);
+    Promise.all([fetchSettings(), fetchPermissions()]).finally(() => setLoading(false));
   }, []);
 
   const handleChange = (key, value) => {
@@ -68,10 +63,10 @@ export default function Settings() {
       };
       await api.put('/settings', payload);
       setSuccess('Settings updated successfully!');
-      setTimeout(() => setSuccess(''), 3000);
+      await fetchSettings();
     } catch (err) {
       console.error('Error saving settings:', err);
-      setError('Failed to save settings.');
+      setError(err.response?.data?.error || 'Failed to save settings.');
     }
   };
 
