@@ -26,13 +26,13 @@ export default function MonthlyRevenueChart({ data }) {
               tick={{ fill: '#9ca3af', fontSize: 12 }} 
               axisLine={false} 
               tickLine={false} 
-              tickFormatter={(value) => \`\${value >= 1000 ? (value/1000) + 'k' : value}\`}
+              tickFormatter={(value) => `${value >= 1000 ? (value/1000) + 'k' : value}`}
             />
             <Tooltip 
               cursor={{ fill: 'rgba(255,255,255,0.05)' }} 
               contentStyle={{ backgroundColor: '#18181b', borderColor: '#3f3f46', borderRadius: '8px' }}
               itemStyle={{ color: '#60a5fa', fontWeight: 'bold' }}
-              formatter={(value) => [\`$\${value}\`, 'Revenue']}
+              formatter={(value) => [`$${value}`, 'Revenue']}
             />
             <Bar dataKey="revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={60} />
           </BarChart>

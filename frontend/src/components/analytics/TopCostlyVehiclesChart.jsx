@@ -34,8 +34,8 @@ export default function TopCostlyVehiclesChart({ data }) {
               </div>
               <div className="w-full bg-background rounded-full h-3 overflow-hidden">
                 <div 
-                  className={\`h-full rounded-full transition-all duration-500 \${getColorClass(index)}\`}
-                  style={{ width: \`\${Math.max(percentage, 2)}%\` }}
+                  className={`h-full rounded-full transition-all duration-500 ${getColorClass(index)}`}
+                  style={{ width: `${Math.max(percentage, 2)}%` }}
                 />
               </div>
             </div>

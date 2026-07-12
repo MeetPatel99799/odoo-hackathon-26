@@ -96,7 +96,7 @@ async function exportCsv(req, res) {
 
     let csv = 'vehicle,fuel_efficiency_kml,operational_cost,roi_pct\n';
     rows.forEach(r => {
-      csv += \`\${r.vehicle},\${parseFloat(r.kml || 0).toFixed(1)},\${parseFloat(r.op_cost || 0).toFixed(2)},\${parseFloat(r.roi || 0).toFixed(2)}\n\`;
+      csv += `${r.vehicle},${parseFloat(r.kml || 0).toFixed(1)},${parseFloat(r.op_cost || 0).toFixed(2)},${parseFloat(r.roi || 0).toFixed(2)}\n`;
     });
 
     res.setHeader('Content-Type', 'text/csv');

@@ -139,7 +139,7 @@ function AppRoutes() {
       <Route
         path="/analytics"
         element={
-          <ProtectedRoute module="analytics">
+          <ProtectedRoute>
             <Layout><Analytics /></Layout>
           </ProtectedRoute>
         }
