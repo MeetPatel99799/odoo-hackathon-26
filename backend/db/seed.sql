@@ -37,12 +37,11 @@ INSERT INTO role_permissions (role_id, module, access_level) VALUES
 (4, 'maintenance', 'Read');
 
 -- Insert demo users for each role (Password is 'Password123!')
--- Hash for 'Password123!' -> $2b$10$Wp.uR.s6.c.T/3Z6.K/Q.O663vL5N4.9v4G.B3P2O1n/hO/Q4V8hO 
 INSERT INTO users (name, email, password_hash, role_id) VALUES
-('Fleet Manager User', 'fleetmanager@transitops.in', '$2a$12$Kk2950J7T9/0nS6n3U5wLe.V/j56hQx7H9M2mYjK9X/g6/07l6mG.', 1),
-('Dispatcher User', 'dispatcher@transitops.in', '$2a$12$Kk2950J7T9/0nS6n3U5wLe.V/j56hQx7H9M2mYjK9X/g6/07l6mG.', 2),
-('Safety Officer User', 'safetyofficer@transitops.in', '$2a$12$Kk2950J7T9/0nS6n3U5wLe.V/j56hQx7H9M2mYjK9X/g6/07l6mG.', 3),
-('Financial Analyst User', 'financialanalyst@transitops.in', '$2a$12$Kk2950J7T9/0nS6n3U5wLe.V/j56hQx7H9M2mYjK9X/g6/07l6mG.', 4);
+('Fleet Manager User', 'fleetmanager@transitops.in', '$2b$12$tecCaByurkdLWuPiPBtlUu6ODeF2R0AqeByNXW2tzfWoMWBT.qG5i', 1),
+('Dispatcher User', 'dispatcher@transitops.in', '$2b$12$tecCaByurkdLWuPiPBtlUu6ODeF2R0AqeByNXW2tzfWoMWBT.qG5i', 2),
+('Safety Officer User', 'safetyofficer@transitops.in', '$2b$12$tecCaByurkdLWuPiPBtlUu6ODeF2R0AqeByNXW2tzfWoMWBT.qG5i', 3),
+('Financial Analyst User', 'financialanalyst@transitops.in', '$2b$12$tecCaByurkdLWuPiPBtlUu6ODeF2R0AqeByNXW2tzfWoMWBT.qG5i', 4);
 
 -- Insert Default Settings
 INSERT INTO settings (depot_name, currency, distance_unit) VALUES
