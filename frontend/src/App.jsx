@@ -115,7 +115,7 @@ function AppRoutes() {
       <Route
         path="/trips"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="trips">
             <Layout><TripDispatcher /></Layout>
           </ProtectedRoute>
         }
