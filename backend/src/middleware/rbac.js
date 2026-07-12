@@ -7,10 +7,13 @@ const requireAccess = (module, minLevel) => {
       
       const { query } = require('../config/db');
       
+      const targetModule = module === 'fleet' ? 'vehicles' : module;
+      const normalizedMinLevel = (minLevel === 'full' || minLevel === 'Write') ? 'Write' : 'Read';
+
       // Fetch permission for this role and module
       const result = await query(
         'SELECT access_level FROM role_permissions WHERE role_id = $1 AND module = $2',
-        [req.user.roleId, module]
+        [req.user.roleId, targetModule]
       );
       
       if (result.rows.length === 0) {
@@ -20,7 +23,7 @@ const requireAccess = (module, minLevel) => {
       const userLevel = result.rows[0].access_level;
       
       // Access level hierarchy: Read < Write
-      if (minLevel === 'Write' && userLevel !== 'Write') {
+      if (normalizedMinLevel === 'Write' && userLevel !== 'Write') {
          return res.status(403).json({ error: `Forbidden: Write access required for module ${module}` });
       }
       

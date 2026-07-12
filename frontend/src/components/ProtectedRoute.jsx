@@ -31,7 +31,7 @@ export default function ProtectedRoute({ children, module }) {
     return <Navigate to="/" replace state={{ unauthorizedToast: 'Not authorized' }} />;
   }
 
-  const perm = module ? permissions.find((p) => p.module === module) : null;
+  const perm = module ? permissions.find((p) => p.module === (module === 'fleet' ? 'vehicles' : module)) : null;
   const readOnly = perm ? isReadOnlyAccess(perm.access_level) : false;
 
   return (

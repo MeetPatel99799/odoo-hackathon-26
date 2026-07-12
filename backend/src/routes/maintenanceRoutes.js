@@ -7,9 +7,9 @@ const router = express.Router();
 
 router.use(verifyToken);
 
-// Using 'maintenance' module and 'Read'/'Write' based on the seeded role_permissions
-router.get('/', requireAccess('maintenance', 'Read'), getMaintenanceLogs);
-router.post('/', requireAccess('maintenance', 'Write'), createMaintenanceLog);
-router.patch('/:id/close', requireAccess('maintenance', 'Write'), closeMaintenanceLog);
+// Using 'fleet' module per prompt requirement, mapped to 'vehicles' in RBAC middleware
+router.get('/', requireAccess('fleet', 'view'), getMaintenanceLogs);
+router.post('/', requireAccess('fleet', 'full'), createMaintenanceLog);
+router.patch('/:id/close', requireAccess('fleet', 'full'), closeMaintenanceLog);
 
 module.exports = router;

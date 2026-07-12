@@ -1,29 +1,94 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../services/api';
+import { useRouteAccess } from '../components/ProtectedRoute';
 import ServiceRecordForm from '../components/maintenance/ServiceRecordForm';
 import StatusFlowDiagram from '../components/maintenance/StatusFlowDiagram';
 import ServiceLogTable from '../components/maintenance/ServiceLogTable';
 
 export default function Maintenance() {
-  // Hardcoded preview data
-  const mockVehicles = [
-    { id: 1, name: 'GJ-01-AB-1234 (Volvo 9400)' },
-    { id: 2, name: 'GJ-01-AB-5678 (Scania Metrolink)' },
-  ];
+  const { readOnly } = useRouteAccess();
+  const [vehicles, setVehicles] = useState([]);
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const mockRecords = [
-    { id: 1, vehicle: 'GJ-01-AB-1234', service: 'Oil Change', cost: 150, status: 'Completed' },
-    { id: 2, vehicle: 'GJ-01-AB-5678', service: 'Brake Pad Replacement', cost: 300, status: 'In Shop' },
-    { id: 3, vehicle: 'GJ-02-XY-9999', service: 'AC Repair', cost: 450, status: 'In Shop' },
-  ];
-
-  const handleSubmit = (fields) => {
-    console.log('Submit record:', fields);
-    alert('Form submitted (Preview)');
+  const fetchVehicles = async () => {
+    try {
+      const { data } = await api.get('/vehicles');
+      // Filter out retired vehicles and format for dropdown
+      const options = data
+        .filter((v) => v.status !== 'Retired')
+        .map((v) => ({
+          id: v.id,
+          name: `${v.reg_no} (${v.name_model})`,
+        }));
+      setVehicles(options);
+    } catch (err) {
+      console.error('Error fetching vehicles:', err);
+      setError('Failed to load vehicles list.');
+    }
   };
 
-  const handleClose = (id) => {
-    console.log('Close record:', id);
-    alert('Record closed (Preview)');
+  const fetchLogs = async () => {
+    try {
+      setLoading(true);
+      const { data } = await api.get('/maintenance');
+      // Map backend fields to the props structure expected by ServiceLogTable
+      const mapped = data.map((item) => ({
+        id: item.id,
+        vehicle: item.vehicle_reg_no || `ID: ${item.vehicle_id}`,
+        service: item.description,
+        cost: parseFloat(item.cost) || 0,
+        status: item.status,
+      }));
+      setRecords(mapped);
+    } catch (err) {
+      console.error('Error fetching maintenance logs:', err);
+      setError('Failed to load maintenance logs.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLogs();
+    if (!readOnly) {
+      fetchVehicles();
+    }
+  }, [readOnly]);
+
+  const handleSubmit = async (fields) => {
+    try {
+      setError('');
+      const payload = {
+        vehicle_id: fields.vehicle,
+        description: fields.service,
+        cost: fields.cost,
+        status: fields.status,
+      };
+      await api.post('/maintenance', payload);
+      await fetchLogs();
+      if (!readOnly) {
+        await fetchVehicles(); // Refetch vehicles to update statuses in case it is "In Shop"
+      }
+    } catch (err) {
+      console.error('Error creating maintenance record:', err);
+      setError(err.response?.data?.error || 'Failed to save maintenance record.');
+    }
+  };
+
+  const handleCloseLog = async (id) => {
+    try {
+      setError('');
+      await api.patch(`/maintenance/${id}/close`);
+      await fetchLogs();
+      if (!readOnly) {
+        await fetchVehicles(); // Refetch vehicles as the status would have reverted to Available
+      }
+    } catch (err) {
+      console.error('Error closing maintenance log:', err);
+      setError(err.response?.data?.error || 'Failed to close maintenance log.');
+    }
   };
 
   return (
@@ -31,25 +96,31 @@ export default function Maintenance() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-text">Maintenance Hub</h1>
       </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1">
-          <ServiceRecordForm 
-            vehicleOptions={mockVehicles} 
-            onSubmit={handleSubmit} 
-          />
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <span className="block sm:inline">{error}</span>
         </div>
-        
-        <div className="lg:col-span-2 flex flex-col space-y-6">
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Hide ServiceRecordForm entirely for non-full (read-only) roles */}
+        {!readOnly ? (
+          <div className="lg:col-span-1">
+            <ServiceRecordForm vehicleOptions={vehicles} onSubmit={handleSubmit} />
+          </div>
+        ) : null}
+
+        <div className={!readOnly ? 'lg:col-span-2 flex flex-col space-y-6' : 'lg:col-span-3 flex flex-col space-y-6'}>
           <StatusFlowDiagram />
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4 text-text">Active & Recent Logs</h3>
-            <ServiceLogTable 
-              records={mockRecords} 
-              onClose={handleClose} 
-              readOnly={false}
-            />
+            {loading ? (
+              <div className="text-center py-6 text-textMuted">Loading logs...</div>
+            ) : (
+              <ServiceLogTable records={records} onClose={handleCloseLog} readOnly={readOnly} />
+            )}
           </div>
         </div>
       </div>

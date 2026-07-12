@@ -123,7 +123,7 @@ function AppRoutes() {
       <Route
         path="/maintenance"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="fleet">
             <Layout><Maintenance /></Layout>
           </ProtectedRoute>
         }
