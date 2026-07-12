@@ -37,7 +37,7 @@ export default function Maintenance() {
       const mapped = data.map((item) => ({
         id: item.id,
         vehicle: item.vehicle_reg_no || `ID: ${item.vehicle_id}`,
-        service: item.description,
+        service: item.service_type,
         cost: parseFloat(item.cost) || 0,
         status: item.status,
       }));
@@ -62,7 +62,7 @@ export default function Maintenance() {
       setError('');
       const payload = {
         vehicle_id: fields.vehicle,
-        description: fields.service,
+        service_type: fields.service,
         cost: fields.cost,
         status: fields.status,
       };

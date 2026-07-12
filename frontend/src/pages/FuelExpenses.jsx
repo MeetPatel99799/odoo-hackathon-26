@@ -9,7 +9,7 @@ import OperationalCostFooter from '../components/fuel/OperationalCostFooter';
 
 export default function FuelExpenses() {
   const { hasAccess } = useAuth();
-  const canWrite = hasAccess('fuel_expenses', 'write');
+  const canWrite = hasAccess('expenses', 'write');
 
   const [fuelLogs, setFuelLogs] = useState([]);
   const [expenses, setExpenses] = useState([]);
