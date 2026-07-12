@@ -1,26 +1,13 @@
-version: '3.8'
-
 services:
-  postgres:
-    image: postgres:15-alpine
-    env_file:
-      - .env
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./backend/db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
-      - ./backend/db/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql
-
   backend:
     build: ./backend
     env_file:
-      - backend/.env
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-    depends_on:
-      - postgres
+      - ./backend/.env        # DB_HOST/PORT/NAME/USER/PASSWORD/SSL, PORT, JWT_*
 
   frontend:
     build: ./frontend
+    env_file:
+      - ./frontend/.env       # VITE_* build-time vars (baked in at docker build)
 
   nginx:
     image: nginx:alpine
@@ -31,6 +18,3 @@ services:
       - frontend
     ports:
       - "80:80"
-
-volumes:
-  postgres_data:

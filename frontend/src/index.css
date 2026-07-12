@@ -1,6 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* ── TransitOps design tokens (Tailwind v4 @theme) ── */
+@theme {
+  --color-background: #0d0d0d;
+  --color-panel:      #161616;
+  --color-primary:    #c9791a;
+  --color-border:     #333333;
+  --color-text:       #e5e5e5;
+}
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -21,18 +28,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #0d0d0d;
-}
-::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #c9791a;
-}
+/* Scrollbar */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: #0d0d0d; }
+::-webkit-scrollbar-thumb  { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #c9791a; }
