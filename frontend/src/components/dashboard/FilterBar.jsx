@@ -73,10 +73,11 @@ export default function FilterBar({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-4 bg-panel border border-border p-4 rounded-xl w-full shadow-md">
+    <div className="glass flex flex-wrap items-center gap-4 p-4 w-full">
       {renderDropdown('Vehicle Type', 'vehicleType', vehicleType, typeOptions)}
       {renderDropdown('Status', 'status', status, statusOptions)}
       {renderDropdown('Region', 'region', region, regionOptions)}
     </div>
   );
 }
+
