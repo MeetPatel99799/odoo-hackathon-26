@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
@@ -25,10 +26,48 @@ const routeToItem = {
   '/settings': 'Settings',
 };
 
+function UnauthorizedToast({ message, onDismiss }) {
+  if (!message) return null;
+
+  return (
+    <div
+      className="fixed top-6 right-6 z-50 max-w-md bg-zinc-900/95 border border-amber-500/60 text-amber-300 px-4 py-3 rounded-lg shadow-xl shadow-black/40 backdrop-blur-sm"
+      role="alert"
+    >
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-semibold tracking-wide">{message}</span>
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="ml-2 text-amber-400/80 hover:text-amber-200 text-xs"
+          aria-label="Dismiss"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function Layout({ children }) {
   const { user, permissions } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const activeItem = routeToItem[location.pathname] || '';
+  const [toastMessage, setToastMessage] = useState('');
+
+  useEffect(() => {
+    if (location.state?.unauthorizedToast) {
+      setToastMessage(location.state.unauthorizedToast);
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state?.unauthorizedToast, location.pathname, navigate]);
+
+  useEffect(() => {
+    if (!toastMessage) return undefined;
+    const timer = setTimeout(() => setToastMessage(''), 4000);
+    return () => clearTimeout(timer);
+  }, [toastMessage]);
 
   return (
     <div className="flex h-screen bg-background text-text overflow-hidden">
@@ -39,6 +78,7 @@ function Layout({ children }) {
           {children}
         </main>
       </div>
+      <UnauthorizedToast message={toastMessage} onDismiss={() => setToastMessage('')} />
     </div>
   );
 }
@@ -46,19 +86,72 @@ function Layout({ children }) {
 function AppRoutes() {
   return (
     <Routes>
-      {/* Login page — no layout */}
       <Route path="/login" element={<Login />} />
 
-      {/* All other pages use the Layout shell.
-          Integration will wrap each route in <ProtectedRoute> as pages are built. */}
-      <Route path="/" element={<Layout><Dashboard /></Layout>} />
-      <Route path="/fleet" element={<Layout><VehicleRegistry /></Layout>} />
-      <Route path="/drivers" element={<Layout><Drivers /></Layout>} />
-      <Route path="/trips" element={<Layout><TripDispatcher /></Layout>} />
-      <Route path="/maintenance" element={<Layout><Maintenance /></Layout>} />
-      <Route path="/fuel" element={<Layout><FuelExpenses /></Layout>} />
-      <Route path="/analytics" element={<Layout><Analytics /></Layout>} />
-      <Route path="/settings" element={<Layout><Settings /></Layout>} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Layout><Dashboard /></Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/fleet"
+        element={
+          <ProtectedRoute>
+            <Layout><VehicleRegistry /></Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/drivers"
+        element={
+          <ProtectedRoute>
+            <Layout><Drivers /></Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trips"
+        element={
+          <ProtectedRoute>
+            <Layout><TripDispatcher /></Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/maintenance"
+        element={
+          <ProtectedRoute>
+            <Layout><Maintenance /></Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/fuel"
+        element={
+          <ProtectedRoute>
+            <Layout><FuelExpenses /></Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/analytics"
+        element={
+          <ProtectedRoute>
+            <Layout><Analytics /></Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Layout><Settings /></Layout>
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

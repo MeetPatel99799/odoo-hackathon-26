@@ -1,30 +1,42 @@
+import { createContext, useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+export const RouteAccessContext = createContext({ readOnly: false });
+
+export function useRouteAccess() {
+  return useContext(RouteAccessContext);
+}
+
+function isReadOnlyAccess(accessLevel) {
+  return accessLevel === 'Read' || accessLevel === 'view';
+}
+
 /**
- * ProtectedRoute — skeleton guard.
+ * ProtectedRoute — auth guard with optional module-based RBAC.
  *
- * Current behaviour: redirects to /login if no token is present in localStorage.
- *
- * TODO (Integration):
- * Add module-based RBAC gating here.
- * After the real login API is wired, check that the user's `permissions` array
- * contains an entry for `requiredModule` with access_level !== 'none'.
- * If not, redirect to a 403/Unauthorized page instead of /login.
- *
- * Usage (Integration phase):
- * <ProtectedRoute requiredModule="fleet">
+ * Usage:
+ * <ProtectedRoute module="vehicles">
  *   <VehicleRegistry />
  * </ProtectedRoute>
  */
-export default function ProtectedRoute({ children, requiredModule }) {
-  const { token } = useAuth();
+export default function ProtectedRoute({ children, module }) {
+  const { token, hasAccess, permissions } = useAuth();
 
   if (!token) {
     return <Navigate to="/login" replace />;
   }
 
-  // TODO: Module-based RBAC check goes here (Integration phase)
+  if (module && !hasAccess(module, 'view')) {
+    return <Navigate to="/" replace state={{ unauthorizedToast: 'Not authorized' }} />;
+  }
 
-  return children;
+  const perm = module ? permissions.find((p) => p.module === module) : null;
+  const readOnly = perm ? isReadOnlyAccess(perm.access_level) : false;
+
+  return (
+    <RouteAccessContext.Provider value={{ readOnly }}>
+      {children}
+    </RouteAccessContext.Provider>
+  );
 }
