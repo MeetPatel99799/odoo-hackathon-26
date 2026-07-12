@@ -62,8 +62,9 @@ export default function Maintenance() {
       setError('');
       const payload = {
         vehicle_id: fields.vehicle,
-        description: fields.service,
+        service_type: fields.service,
         cost: fields.cost,
+        service_date: fields.date,
         status: fields.status,
       };
       await api.post('/maintenance', payload);
