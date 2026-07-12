@@ -1,7 +1,7 @@
 const requireAccess = (module, minLevel) => {
   return async (req, res, next) => {
     try {
-      if (!req.user || !req.user.role_id) {
+      if (!req.user || !req.user.roleId) {
         return res.status(401).json({ error: 'Unauthorized: User role not found' });
       }
       
@@ -10,7 +10,7 @@ const requireAccess = (module, minLevel) => {
       // Fetch permission for this role and module
       const result = await query(
         'SELECT access_level FROM role_permissions WHERE role_id = $1 AND module = $2',
-        [req.user.role_id, module]
+        [req.user.roleId, module]
       );
       
       if (result.rows.length === 0) {
