@@ -10,5 +10,6 @@ router.use('/trips', require('./tripRoutes'));
 router.use('/maintenance', require('./maintenanceRoutes'));
 router.use('/fuel-logs', require('./fuelRoutes'));
 router.use('/expenses', require('./expenseRoutes'));
+router.use('/analytics', require('./analyticsRoutes'));
 
 module.exports = router;
