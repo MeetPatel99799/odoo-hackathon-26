@@ -125,22 +125,36 @@ export default function LoginForm({ onSubmit, loading, roleOptions }) {
       </div>
 
       {/* ── RIGHT PANEL — form ── */}
-      <div className="w-full md:w-[58%] flex items-center justify-center p-8 md:p-14">
-        <div className="w-full max-w-md">
+      <div className="relative w-full md:w-[58%] flex items-center justify-center p-6 sm:p-8 md:p-14">
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_70%_18%,rgba(91,141,239,0.12),transparent_30%)]" />
+        <div className="relative w-full max-w-md">
 
           {/* Glass form card */}
-          <div className="glass p-8 shadow-2xl">
-            <h2 className="text-2xl font-bold text-text mb-1 tracking-tight">
-              Sign in to your account
-            </h2>
-            <p className="text-muted text-sm mb-8">
-              Enter your credentials to continue
-            </p>
+          <div className="glass overflow-hidden shadow-2xl">
+            <div className="h-1 bg-linear-to-r from-primary via-cyan-400 to-emerald-400" />
+            <div className="p-6 sm:p-8">
+              <div className="flex items-start justify-between gap-4 mb-8">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-primary font-bold mb-3">Operations portal</p>
+                  <h2 className="text-2xl font-bold text-text tracking-tight">
+                    Welcome back
+                  </h2>
+                  <p className="text-muted text-sm mt-1.5">
+                    Sign in to manage your fleet.
+                  </p>
+                </div>
+                <div className="shrink-0 w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <path d="M7 9h10M7 13h5" />
+                  </svg>
+                </div>
+              </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-5">
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">
+                  <label htmlFor="email" className="block text-[11px] font-bold text-text/80 uppercase tracking-wider mb-2">
                   Email Address
                 </label>
                 <input
@@ -156,7 +170,7 @@ export default function LoginForm({ onSubmit, loading, roleOptions }) {
 
               {/* Password */}
               <div>
-                <label htmlFor="password" className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">
+                  <label htmlFor="password" className="block text-[11px] font-bold text-text/80 uppercase tracking-wider mb-2">
                   Password
                 </label>
                 <div className="relative">
@@ -186,7 +200,7 @@ export default function LoginForm({ onSubmit, loading, roleOptions }) {
 
               {/* Role */}
               <div>
-                <label htmlFor="role" className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">
+                  <label htmlFor="role" className="block text-[11px] font-bold text-text/80 uppercase tracking-wider mb-2">
                   Role (RBAC)
                 </label>
                 <select
@@ -231,7 +245,7 @@ export default function LoginForm({ onSubmit, loading, roleOptions }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-2 py-3 px-4 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed"
+                className="w-full mt-3 py-3.5 px-4 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed hover:brightness-110 active:scale-[0.99]"
                 style={{
                   background: loading ? 'rgba(91,141,239,0.4)' : 'rgba(91,141,239,1)',
                   color: '#fff',
@@ -250,27 +264,30 @@ export default function LoginForm({ onSubmit, loading, roleOptions }) {
                   'Sign In'
                 )}
               </button>
-            </form>
+              </form>
 
-            {/* Scope table */}
-            <div className="mt-8 border-t border-white/10 pt-6">
-              <span className="text-xs font-bold text-muted uppercase tracking-widest block mb-3">
-                Access is scoped by role:
-              </span>
-              <ul className="space-y-2 text-xs text-muted">
-                {[
-                  ['Fleet Manager',     'Fleet, Maintenance'],
-                  ['Dispatcher',        'Dashboard, Trips'],
-                  ['Safety Officer',    'Drivers, Compliance'],
-                  ['Financial Analyst', 'Fuel & Expenses, Analytics'],
-                ].map(([name, scope]) => (
-                  <li key={name} className="flex items-center gap-1.5">
-                    <span className="font-medium text-text/70 w-32 shrink-0">{name}</span>
-                    <span className="text-primary font-bold">&rarr;</span>
-                    <span>{scope}</span>
-                  </li>
-                ))}
-              </ul>
+              {/* Scope table */}
+              <div className="mt-8 pt-6 border-t border-white/10">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[10px] font-bold text-muted uppercase tracking-[0.16em]">
+                    Role access
+                  </span>
+                  <span className="text-[10px] text-emerald-300 font-semibold uppercase tracking-wider">RBAC active</span>
+                </div>
+                <ul className="grid grid-cols-2 gap-2 text-[11px] text-muted">
+                  {[
+                    ['Fleet Manager', 'Fleet'],
+                    ['Dispatcher', 'Trips'],
+                    ['Safety Officer', 'Compliance'],
+                    ['Financial Analyst', 'Analytics'],
+                  ].map(([name, scope]) => (
+                    <li key={name} className="rounded-md bg-white/4 px-2.5 py-2">
+                      <span className="block font-semibold text-text/80 truncate">{name}</span>
+                      <span className="text-primary mt-0.5 block">{scope}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </div>
