@@ -49,7 +49,7 @@ export default function LoginForm({ onSubmit, loading, roleOptions }) {
           style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.10) 0%, transparent 70%)' }}
         />
 
-        <div className="relative flex flex-col flex-1 justify-center max-w-xs">
+        <div className="relative flex flex-col flex-1 justify-center max-w-lg">
           {/* Logo */}
           <div className="w-14 h-14 glass-primary rounded-xl flex items-center justify-center mb-8 shadow-lg">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
@@ -60,10 +60,62 @@ export default function LoginForm({ onSubmit, loading, roleOptions }) {
           <h1 className="text-4xl font-extrabold text-text tracking-tight leading-tight mb-2">
             TransitOps
           </h1>
-          <p className="text-muted text-sm mb-10 font-medium">
+          <p className="text-muted text-sm mb-8 font-medium">
             Smart Transport Operations Platform
           </p>
 
+          <div className="glass-subtle p-4 mb-8 border-white/10">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-muted font-bold">Fleet pulse</p>
+                <p className="text-sm text-text font-semibold mt-1">Operations are moving</p>
+              </div>
+              <span className="flex items-center gap-1.5 text-[10px] text-emerald-300 uppercase tracking-wider font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
+                Live
+              </span>
+            </div>
+
+            <div className="relative h-24 mb-4 overflow-hidden rounded-lg bg-black/15 border border-white/5">
+              <div className="absolute inset-x-5 top-1/2 border-t border-dashed border-primary/40" />
+              <div className="absolute left-[15%] top-[29%] w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_0_4px_rgba(91,141,239,0.14),0_0_14px_rgba(91,141,239,0.8)]" />
+              <div className="absolute left-[48%] top-[58%] w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_0_4px_rgba(251,191,36,0.12),0_0_14px_rgba(251,191,36,0.7)]" />
+              <div className="absolute right-[14%] top-[29%] w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(52,211,153,0.12),0_0_14px_rgba(52,211,153,0.7)]" />
+              <div className="absolute left-[15%] top-[29%] w-[35%] h-[42%] border-l border-b border-primary/50 rounded-bl-[20px] -rotate-6" />
+              <div className="absolute left-[48%] top-[29%] w-[38%] h-[42%] border-r border-t border-amber-400/40 rounded-tr-[20px] rotate-6" />
+              <span className="absolute left-3 bottom-2 text-[9px] text-muted uppercase tracking-widest">Depot A</span>
+              <span className="absolute right-3 top-2 text-[9px] text-muted uppercase tracking-widest">Hub C</span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              <div className="rounded-md bg-white/4 p-2.5">
+                <p className="text-lg font-bold text-text leading-none">84%</p>
+                <p className="text-[9px] text-muted uppercase tracking-wider mt-1.5">Utilized</p>
+              </div>
+              <div className="rounded-md bg-white/4 p-2.5">
+                <p className="text-lg font-bold text-text leading-none">24</p>
+                <p className="text-[9px] text-muted uppercase tracking-wider mt-1.5">On route</p>
+              </div>
+              <div className="rounded-md bg-white/4 p-2.5">
+                <p className="text-lg font-bold text-text leading-none">98.2%</p>
+                <p className="text-[9px] text-muted uppercase tracking-wider mt-1.5">On time</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 pt-6">
+            <p className="text-xs font-bold text-muted uppercase tracking-widest mb-4">
+              One login, Four roles:
+            </p>
+            <ul className="space-y-3 text-sm">
+              {['Fleet Manager', 'Dispatcher', 'Safety Officer', 'Financial Analyst'].map((r) => (
+                <li key={r} className="flex items-center gap-3">
+                  <span className="w-2 h-2 rounded-full bg-primary shrink-0" style={{ boxShadow: '0 0 8px rgba(91,141,239,0.6)' }} />
+                  <span className="font-medium text-text/80">{r}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* Footer */}
@@ -200,7 +252,26 @@ export default function LoginForm({ onSubmit, loading, roleOptions }) {
               </button>
             </form>
 
-
+            {/* Scope table */}
+            <div className="mt-8 border-t border-white/10 pt-6">
+              <span className="text-xs font-bold text-muted uppercase tracking-widest block mb-3">
+                Access is scoped by role:
+              </span>
+              <ul className="space-y-2 text-xs text-muted">
+                {[
+                  ['Fleet Manager',     'Fleet, Maintenance'],
+                  ['Dispatcher',        'Dashboard, Trips'],
+                  ['Safety Officer',    'Drivers, Compliance'],
+                  ['Financial Analyst', 'Fuel & Expenses, Analytics'],
+                ].map(([name, scope]) => (
+                  <li key={name} className="flex items-center gap-1.5">
+                    <span className="font-medium text-text/70 w-32 shrink-0">{name}</span>
+                    <span className="text-primary font-bold">&rarr;</span>
+                    <span>{scope}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
