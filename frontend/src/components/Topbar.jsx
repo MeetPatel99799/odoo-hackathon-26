@@ -1,4 +1,14 @@
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
 export default function Topbar({ user }) {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
   const initial = user?.name?.[0]?.toUpperCase() ?? '?';
 
   const roleColors = {
@@ -45,6 +55,18 @@ export default function Topbar({ user }) {
             >
               {initial}
             </div>
+            <button
+              onClick={handleLogout}
+              className="ml-2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-muted hover:text-text hover:bg-white/[0.05] transition-colors"
+              title="Sign Out"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              Sign Out
+            </button>
           </>
         ) : (
           <span className="text-sm text-muted">Not logged in</span>

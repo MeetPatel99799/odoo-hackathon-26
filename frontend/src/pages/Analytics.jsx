@@ -26,35 +26,16 @@ export default function Analytics() {
       let fetchedRevenue = revRes.data;
       let fetchedCostly = costRes.data;
 
-      // Mock data fallback if API is unreachable/unseeded
       if (!fetchedSummary) {
         fetchedSummary = {
-          fuelEfficiencyKmL: 8.5,
-          fleetUtilizationPct: 92,
-          operationalCost: 15420.50,
-          vehicleRoiPct: 14.2
+          fuelEfficiencyKmL: 0,
+          fleetUtilizationPct: 0,
+          operationalCost: 0,
+          vehicleRoiPct: 0
         };
       }
-      if (!fetchedRevenue || fetchedRevenue.length === 0) {
-        fetchedRevenue = [
-          { month: '2025-12', revenue: 45000 },
-          { month: '2026-01', revenue: 42000 },
-          { month: '2026-02', revenue: 48000 },
-          { month: '2026-03', revenue: 51000 },
-          { month: '2026-04', revenue: 49000 },
-          { month: '2026-05', revenue: 55000 },
-          { month: '2026-06', revenue: 60000 }
-        ];
-      }
-      if (!fetchedCostly || fetchedCostly.length === 0) {
-        fetchedCostly = [
-          { vehicle: 'VAN-001', cost: 4200 },
-          { vehicle: 'TRK-099', cost: 3800 },
-          { vehicle: 'VAN-002', cost: 2100 },
-          { vehicle: 'TRK-105', cost: 1500 },
-          { vehicle: 'CAR-007', cost: 850 }
-        ];
-      }
+      if (!fetchedRevenue) fetchedRevenue = [];
+      if (!fetchedCostly) fetchedCostly = [];
 
       setSummary(fetchedSummary);
       setMonthlyRevenue(fetchedRevenue);

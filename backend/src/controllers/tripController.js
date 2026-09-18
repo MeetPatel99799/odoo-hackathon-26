@@ -2,7 +2,7 @@ const { query, pool } = require('../config/db');
 
 const getAvailableVehicles = async (req, res) => {
   try {
-    const result = await query("SELECT * FROM vehicles WHERE status='Available'");
+    const result = await query("SELECT id, reg_no AS \"regNo\", max_capacity_kg AS \"capacity\", type, status FROM vehicles WHERE status='Available'");
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching available vehicles:', error);
@@ -12,7 +12,7 @@ const getAvailableVehicles = async (req, res) => {
 
 const getAvailableDrivers = async (req, res) => {
   try {
-    const result = await query("SELECT * FROM drivers WHERE status='Available' AND license_expiry >= CURRENT_DATE");
+    const result = await query("SELECT id, name, license_no AS \"licenseNo\", license_category AS \"category\", license_expiry AS \"licenseExpiry\", contact_number AS \"contact\", status FROM drivers WHERE status='Available' AND license_expiry >= CURRENT_DATE");
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching available drivers:', error);
@@ -24,7 +24,7 @@ const getTrips = async (req, res) => {
   try {
     const { status } = req.query;
     let sql = `
-      SELECT t.*, v.reg_no as vehicle_reg_no, d.name as driver_name 
+      SELECT t.*, t.trip_code as "tripCode", v.reg_no as vehicle, d.name as driver 
       FROM trips t
       LEFT JOIN vehicles v ON t.vehicle_id = v.id
       LEFT JOIN drivers d ON t.driver_id = d.id
@@ -142,6 +142,14 @@ const dispatchTrip = async (req, res) => {
 const completeTrip = async (req, res) => {
   const { id } = req.params;
   const { final_odometer, fuel_consumed_liters } = req.body;
+
+  if (final_odometer === undefined || isNaN(final_odometer) || Number(final_odometer) <= 0) {
+    return res.status(400).json({ error: 'Valid final odometer is required' });
+  }
+  if (fuel_consumed_liters === undefined || isNaN(fuel_consumed_liters) || Number(fuel_consumed_liters) < 0) {
+    return res.status(400).json({ error: 'Valid fuel consumed is required' });
+  }
+
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -156,6 +164,14 @@ const completeTrip = async (req, res) => {
     if (trip.status !== 'Dispatched') {
       await client.query('ROLLBACK');
       return res.status(400).json({ error: 'Only Dispatched trips can be completed' });
+    }
+
+    const vehicleRes = await client.query('SELECT odometer FROM vehicles WHERE id = $1', [trip.vehicle_id]);
+    if (vehicleRes.rows.length > 0) {
+      if (Number(final_odometer) < Number(vehicleRes.rows[0].odometer)) {
+        await client.query('ROLLBACK');
+        return res.status(400).json({ error: 'Final odometer cannot be less than current vehicle odometer' });
+      }
     }
 
     // Update statuses and insert fuel log

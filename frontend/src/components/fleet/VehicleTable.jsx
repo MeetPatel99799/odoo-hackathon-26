@@ -82,12 +82,6 @@ export default function VehicleTable({ vehicles = [] }) {
         )}
       </div>
 
-      {/* Rules disclaimer below table */}
-      <div className="px-6 py-4 bg-background/30 border-t border-border/40">
-        <p className="text-xs text-red-400 italic">
-          Rule: Registration No. must be unique &middot; Retired/In Shop vehicles are hidden from Trip Dispatcher
-        </p>
-      </div>
     </div>
   );
 }

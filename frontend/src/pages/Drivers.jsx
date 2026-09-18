@@ -27,14 +27,6 @@ export default function Drivers() {
       setDrivers(processed);
     } catch (err) {
       console.error('Failed to fetch drivers:', err);
-      // Fallback for visual preview if API is down/missing during dev
-      if (drivers.length === 0) {
-          setDrivers([
-              { id: 1, name: 'John Doe', licenseNo: 'DL-12345', category: 'HMV', expiry: '2027-05-10', contact: '555-0101', tripCompletionPct: 95, safetyPct: 92, status: 'Available', isExpired: false },
-              { id: 2, name: 'Sarah Connor', licenseNo: 'DL-67890', category: 'LMV', expiry: '2023-11-20', contact: '555-0102', tripCompletionPct: 88, safetyPct: 75, status: 'Suspended', isExpired: true },
-              { id: 3, name: 'Alex Mercer', licenseNo: 'DL-54321', category: 'HMV', expiry: '2028-01-15', contact: '555-0103', tripCompletionPct: 99, safetyPct: 65, status: 'On Trip', isExpired: false },
-          ]);
-      }
     }
   }, [search]); // eslint-disable-next-line react-hooks/exhaustive-deps
 

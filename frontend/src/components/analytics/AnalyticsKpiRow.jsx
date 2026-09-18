@@ -25,7 +25,7 @@ export default function AnalyticsKpiRow({ fuelEfficiencyKmL, fleetUtilizationPct
         />
         <KpiCard 
           label="Vehicle ROI" 
-          value={vehicleRoiPct} 
+          value={parseFloat(vehicleRoiPct || 0).toFixed(1)} 
           suffix="%" 
           accentColor="border-green-500" 
         />

@@ -14,9 +14,9 @@ async function getSummary(req, res) {
           NULLIF((SELECT SUM(liters) FROM fuel_logs), 0) as kml
       `),
       db.query(`
-        SELECT AVG(((COALESCE(trip_rev.rev, 0) - (COALESCE(f.cost, 0) + COALESCE(m.cost, 0))) / NULLIF(v.acquisition_cost, 0)) * 100) as avg_roi
+        SELECT ROUND(AVG(((COALESCE(trip_rev.rev, 0) - (COALESCE(f.cost, 0) + COALESCE(m.cost, 0))) / NULLIF(v.acquisition_cost, 0)) * 100)::numeric, 1) as avg_roi
         FROM vehicles v
-        LEFT JOIN (SELECT vehicle_id, SUM(planned_distance_km * ${RATE_PER_KM}) as rev FROM trips WHERE status = 'Completed' GROUP BY vehicle_id) trip_rev ON v.id = trip_rev.vehicle_id
+        INNER JOIN (SELECT vehicle_id, SUM(planned_distance_km * ${RATE_PER_KM}) as rev FROM trips WHERE status = 'Completed' GROUP BY vehicle_id) trip_rev ON v.id = trip_rev.vehicle_id
         LEFT JOIN (SELECT vehicle_id, SUM(cost) as cost FROM fuel_logs GROUP BY vehicle_id) f ON v.id = f.vehicle_id
         LEFT JOIN (SELECT vehicle_id, SUM(cost) as cost FROM maintenance_logs GROUP BY vehicle_id) m ON v.id = m.vehicle_id
       `)
@@ -84,7 +84,7 @@ async function exportCsv(req, res) {
       SELECT v.reg_no as vehicle,
              COALESCE(trip_rev.dist, 0) / NULLIF(f.liters, 0) as kml,
              (COALESCE(f.cost, 0) + COALESCE(m.cost, 0)) as op_cost,
-             (((COALESCE(trip_rev.rev, 0) - (COALESCE(f.cost, 0) + COALESCE(m.cost, 0))) / NULLIF(v.acquisition_cost, 0)) * 100) as roi
+             ROUND((((COALESCE(trip_rev.rev, 0) - (COALESCE(f.cost, 0) + COALESCE(m.cost, 0))) / NULLIF(v.acquisition_cost, 0)) * 100)::numeric, 1) as roi
       FROM vehicles v
       LEFT JOIN (
           SELECT vehicle_id, SUM(planned_distance_km) as dist, SUM(planned_distance_km * ${RATE_PER_KM}) as rev 
